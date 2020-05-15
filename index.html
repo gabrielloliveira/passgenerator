@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"> 
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
   <title>PassGenerator</title>
   <style>
     *{
@@ -67,6 +68,27 @@
       cursor: pointer;
       background-color: rgb(151, 26, 240);
     }
+    #result{
+      width: calc(100% - 50px);
+    }
+    #copy{
+      width: 50px;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      background-color: rgba(112,6,255,1);
+    }
+    #copy:hover{
+      background-color: rgb(109, 18, 230);
+    }
+    #copy.button-success{
+      background-color: rgb(22, 209, 100);
+    }
+    #copy.button-success:hover{
+      background-color: rgb(12, 173, 79);
+    }
+    .flex-options{
+      display: flex;
+    }
 
     @media screen and (min-width: 700px){
       .card{
@@ -88,7 +110,12 @@
     <div class="container">
       <div class="card">
         <h1 class="title">PassGenerator</h1>
-        <input type="text" id="result" readonly placeholder="Your password will be generated here">
+        <div class="flex-options">
+          <input type="text" id="result" readonly placeholder="Your password will be generated here">
+          <button id="copy" title="Copy Password">
+            <i class="fas fa-clipboard" id="icon"></i>
+          </button>
+        </div>
         <input type="number" value="15" min="15" max="255" step="1" id="qtd-chars">
         <button id="generate">Generate</button>
       </div>
@@ -98,6 +125,8 @@
 
 <script>
   const button = document.getElementById("generate")
+  const copy = document.getElementById("copy")
+  const icon = document.getElementById("icon")
 
   const properties = {
     hasLowerChar: false,
@@ -143,7 +172,18 @@
     properties.hasSpecialChar = false
   }
 
+  function resetCopyButton(){
+    copy.classList = ""
+    icon.classList = "fas fa-clipboard"
+  }
+
+  function changeCopyButton(){
+    copy.classList = "button-success"
+    icon.classList = "fas fa-check"
+  }
+
   button.addEventListener('click', () => {
+    resetCopyButton()
     const qtdCharsPassword = parseInt(document.getElementById("qtd-chars").value)
     if(qtdCharsPassword >= 15 && qtdCharsPassword <= 255){
       let password = generatePassword()
@@ -157,6 +197,20 @@
       alert("The number of characters must be between 15 and 255.")
     }
   })
+
+  copy.addEventListener('click', ()=> {
+    const password = document.getElementById('result').value
+    if(password){
+      const el = document.createElement('textarea');
+      el.value = password;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      changeCopyButton()
+    }
+  })
+
 </script>
 
 </html>
