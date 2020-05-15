@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"> 
+  <title>PassGenerator</title>
+  <style>
+    *{
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+    }
+    html{
+      background: rgb(112,6,255);
+      background: linear-gradient(143deg, rgba(112,6,255,1) 0%, rgba(128,5,218,1) 100%);
+    }
+    .main{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      height: 100vh;
+    }
+    .container{
+      width: 100%;
+    }
+    .card{
+      background-color: white;
+      width: 100%;
+      padding: 20px;
+      border-radius: 6px;
+    }
+    .card .title{
+      font-size: 1.75rem;
+      text-align: center;
+      margin-bottom: 1rem;
+      color: rgb(63, 63, 63);
+    }
+    .card input{
+      display: block;
+      width: 100%;
+      margin: 15px 0;
+      line-height: 1.5rem;
+      font-size: 1.3rem;
+      text-align: center;
+      border-radius: 3px;
+      border: 1px solid rgb(223, 223, 223);
+      color: rgb(63, 63, 63);
+      padding: 0 5px;
+    }
+    .card button{
+      display: block;
+      margin: 15px 0;
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 1rem;
+      background-color: rgba(128,5,218,1);
+      color: white;
+
+      transition: background-color .3s linear;
+    }
+    .card button:hover{
+      cursor: pointer;
+      background-color: rgb(151, 26, 240);
+    }
+
+    @media screen and (min-width: 700px){
+      .card{
+        width: 50%;
+        margin: 0 auto;
+      }
+    }
+    @media screen and (min-width: 920px){
+      .card{
+        width: 30%;
+        margin: 0 auto;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <section class="main">
+    <div class="container">
+      <div class="card">
+        <h1 class="title">PassGenerator</h1>
+        <input type="text" id="result" readonly placeholder="Your password will be generated here">
+        <input type="number" value="15" min="15" max="255" step="1" id="qtd-chars">
+        <button id="generate">Generate</button>
+      </div>
+    </div>
+  </section>
+</body>
+
+<script>
+  const button = document.getElementById("generate")
+
+  const properties = {
+    hasLowerChar: false,
+    hasUpperChar: false,
+    hasNumberChar: false,
+    hasSpecialChar: false,
+  }
+
+  function generatePassword(){
+    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-+='{}|[];.,/?"
+    const qtdCharsPassword = parseInt(document.getElementById("qtd-chars").value)
+    let password = ""
+    for (let i = 0; i < qtdCharsPassword; i++) {
+      const index = Math.floor(Math.random() * chars.length)
+      password += chars[index]
+      if(!properties.hasLowerChar){
+        if(chars[index].charCodeAt(0) >= 97 && chars[index].charCodeAt(0) <= 122)
+          properties.hasLowerChar = true
+      }else if(!properties.hasUpperChar){
+        if(chars[index].charCodeAt(0) >= 65 && chars[index].charCodeAt(0) <= 90)
+          properties.hasUpperChar = true
+      }else if(!properties.hasNumberChar){
+        if(chars[index].charCodeAt(0) >= 48 && chars[index].charCodeAt(0) <= 57)
+          properties.hasNumberChar = true
+      }else if(!properties.hasSpecialChar){
+        properties.hasSpecialChar = true
+      }
+    }
+    return password
+  }
+
+  function hasAllAttributes(){
+    if(!properties.hasLowerChar || !properties.hasUpperChar || !properties.hasNumberChar || !properties.hasSpecialChar){
+      return false
+    }
+    return true
+  }
+
+  function resetAttributes(){
+    properties.hasLowerChar = false
+    properties.hasUpperChar = false
+    properties.hasNumberChar = false
+    properties.hasSpecialChar = false
+  }
+
+  button.addEventListener('click', () => {
+    const qtdCharsPassword = parseInt(document.getElementById("qtd-chars").value)
+    if(qtdCharsPassword >= 15 && qtdCharsPassword <= 255){
+      let password = generatePassword()
+      while(!hasAllAttributes()){
+        resetAttributes()
+        password = generatePassword()
+      }
+      const result = document.getElementById('result')
+      result.value = password
+    }else{
+      alert("The number of characters must be between 15 and 255.")
+    }
+  })
+</script>
+
+</html>
